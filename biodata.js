@@ -71,21 +71,66 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnProfil = document.getElementById("btnProfil");
     const profilePopover = document.getElementById("profilePopover");
     const profileContainer = document.querySelector(".profile-menu-container");
+    const popoverIframe = document.querySelector(".popover-iframe");
+
+    if (popoverIframe) {
+        popoverIframe.setAttribute("scrolling", "no");
+    }
+
+    function sesuaikanTinggiPopover() {
+        if (!popoverIframe || !profilePopover.classList.contains("is-open")) {
+            return;
+        }
+
+        requestAnimationFrame(function () {
+            try {
+                const doc = popoverIframe.contentDocument || (popoverIframe.contentWindow && popoverIframe.contentWindow.document);
+                if (doc && doc.body) {
+                    doc.documentElement.style.overflow = "hidden";
+                    doc.body.style.overflow = "hidden";
+                    popoverIframe.style.height = "auto";
+                    const tinggiKonten = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+                    if (tinggiKonten > 0) {
+                        popoverIframe.style.height = tinggiKonten + "px";
+                    }
+                }
+            } catch (err) {
+                popoverIframe.style.height = "540px";
+            }
+        });
+    }
+
+    function setPopoverState(isOpen) {
+        profilePopover.classList.toggle("is-open", isOpen);
+        btnProfil.setAttribute("aria-expanded", String(isOpen));
+        if (isOpen) {
+            sesuaikanTinggiPopover();
+        }
+    }
+
+    if (popoverIframe) {
+        popoverIframe.addEventListener("load", sesuaikanTinggiPopover);
+    }
+
+    window.addEventListener("resize", sesuaikanTinggiPopover);
 
     btnProfil.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
 
-        if (profilePopover.style.display === "block") {
-            profilePopover.style.display = "none";
-        } else {
-            profilePopover.style.display = "block";
-        }
+        const isOpen = !profilePopover.classList.contains("is-open");
+        setPopoverState(isOpen);
     });
 
     document.addEventListener("click", function (event) {
         if (!profileContainer.contains(event.target)) {
-            profilePopover.style.display = "none";
+            setPopoverState(false);
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && profilePopover.classList.contains("is-open")) {
+            setPopoverState(false);
         }
     });
 

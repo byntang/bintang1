@@ -16,11 +16,11 @@
                 
                 <!-- KONTAINER PROFIL DENGAN POPOVER (MELAYANG DI BAWAHNYA) -->
                 <div class="profile-menu-container">
-                    <a href="#" id="btnProfil">Profil</a>
+                    <a href="#" id="btnProfil" aria-expanded="false" aria-controls="profilePopover">Profil</a>
                     
                     <!-- Kotak Popover Profil yang melayang tepat di bawah tombol -->
-                    <div class="profile-popover" id="profilePopover">
-                        <iframe src="profile.html" class="popover-iframe"></iframe>
+                    <div class="profile-popover" id="profilePopover" role="dialog" aria-label="Profil">
+                        <iframe src="profile.html" class="popover-iframe" title="Profil"></iframe>
                     </div>
                 </div>
 
